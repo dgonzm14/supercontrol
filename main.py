@@ -2,12 +2,12 @@ from PyQt5 import QtCore, QtWidgets
 from controlador.login import Ui_label_usuario
 from controlador.registrar import Ui_Dialog
 
-# Interfaces por rol
+
 from controlador.cliente import Ui_ClienteWindow
 from controlador.empleado import Ui_EmpleadoWindow
 from controlador.jefe import Ui_JefeWindow
 
-# Ventanas adicionales
+
 from vista.ventana_consultar_stock import VentanaConsultarStock
 from vista.ventana_precios import VentanaConsultarPrecios
 from vista.ventana_mod_stock2 import VentanaModificarStock
@@ -16,7 +16,7 @@ from vista.ventana_modificar_precio import VentanaModificarPrecio
 from vista.ventana_informe_stock import VentanaInformeStock
 from vista.ventana_valor_stock import VentanaValorStock
 
-# Capa de abstracción con singleton
+
 from modelo.sqlserver_db import SqlServerDatabase
 
 class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
@@ -84,7 +84,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
             self.ui_rol.btn_modificar_stock.clicked.connect(self.abrir_modificar_stock)
             self.ui_rol.btn_anadir_producto.clicked.connect(self.abrir_aniadir_producto)
 
-        else:  # jefe
+        else:  
             self.ventana_rol = QtWidgets.QDialog(self)
             self.ui_rol = Ui_JefeWindow()
             self.ui_rol.setupUi(self.ventana_rol)
