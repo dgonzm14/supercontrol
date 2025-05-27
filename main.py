@@ -1,23 +1,23 @@
 from PyQt5 import QtCore, QtWidgets
-from login import Ui_label_usuario
-from registrar import Ui_Dialog
+from controlador.login import Ui_label_usuario
+from controlador.registrar import Ui_Dialog
 
 # Interfaces por rol
-from cliente import Ui_ClienteWindow
-from empleado import Ui_EmpleadoWindow
-from jefe import Ui_JefeWindow
+from controlador.cliente import Ui_ClienteWindow
+from controlador.empleado import Ui_EmpleadoWindow
+from controlador.jefe import Ui_JefeWindow
 
 # Ventanas adicionales
-from ventana_consultar_stock import VentanaConsultarStock
-from ventana_precios import VentanaConsultarPrecios
-from ventana_mod_stock2 import VentanaModificarStock
-from ventana_aniadir_producto import VentanaAniadirProducto
-from ventana_modificar_precio import VentanaModificarPrecio
-from ventana_informe_stock import VentanaInformeStock
-from ventana_valor_stock import VentanaValorStock
+from vista.ventana_consultar_stock import VentanaConsultarStock
+from vista.ventana_precios import VentanaConsultarPrecios
+from vista.ventana_mod_stock2 import VentanaModificarStock
+from vista.ventana_aniadir_producto import VentanaAniadirProducto
+from vista.ventana_modificar_precio import VentanaModificarPrecio
+from vista.ventana_informe_stock import VentanaInformeStock
+from vista.ventana_valor_stock import VentanaValorStock
 
 # Capa de abstracción con singleton
-from sqlserver_db import SqlServerDatabase
+from modelo.sqlserver_db import SqlServerDatabase
 
 class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
     def __init__(self):

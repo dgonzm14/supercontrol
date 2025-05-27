@@ -1,5 +1,5 @@
 from PyQt5 import QtWidgets
-from aniadir_producto import Ui_AniadirProductoDialog
+from controlador.aniadir_producto import Ui_AniadirProductoDialog
 
 class VentanaAniadirProducto(QtWidgets.QDialog):
     def __init__(self, parent=None, conexion=None):

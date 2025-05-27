@@ -1,16 +1,14 @@
-# ventana_precios.py
-
 from PyQt5 import QtWidgets
-from consultar_precios import Ui_ConsultarPreciosWindow
+from controlador.consultar_stock import Ui_ConsultarStockWindow
 import pyodbc
 
-class VentanaConsultarPrecios(QtWidgets.QDialog):
+class VentanaConsultarStock(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.ui = Ui_ConsultarPreciosWindow()
+        self.ui = Ui_ConsultarStockWindow()
         self.ui.setupUi(self)
 
-        self.ui.btn_volver.clicked.connect(self.volver)
+        self.ui.btn_volver.clicked.connect(self.volver_a_cliente)
         self.ui.btn_salir.clicked.connect(QtWidgets.qApp.quit)
 
         self.cargar_datos()
@@ -24,36 +22,32 @@ class VentanaConsultarPrecios(QtWidgets.QDialog):
                 'Trusted_Connection=yes;'
             )
             cursor = conn.cursor()
-            # Atención aquí: debe ser nombre_producto, NO nombre
+            # Solo seleccionamos las columnas deseadas
             cursor.execute("""
-                SELECT nombre_producto AS Producto, precio AS Precio
-                FROM productos
+                SELECT p.nombre_producto, s.cantidad, p.descripcion_producto
+                FROM productos p
+                JOIN stock s ON p.id_producto = s.id_producto
             """)
             resultados = cursor.fetchall()
 
-            self.ui.tabla_precios.setColumnCount(2)
-            self.ui.tabla_precios.setHorizontalHeaderLabels(["Producto", "Precio"])
-            self.ui.tabla_precios.setRowCount(len(resultados))
+            self.ui.tabla_stock.setColumnCount(3)
+            self.ui.tabla_stock.setHorizontalHeaderLabels(["Producto", "Stock", "Descripción"])
+            self.ui.tabla_stock.setRowCount(len(resultados))
 
             for fila, datos in enumerate(resultados):
                 for columna, valor in enumerate(datos):
                     item = QtWidgets.QTableWidgetItem(str(valor))
-                    self.ui.tabla_precios.setItem(fila, columna, item)
+                    self.ui.tabla_stock.setItem(fila, columna, item)
 
-            self.ui.tabla_precios.resizeColumnsToContents()
+            self.ui.tabla_stock.resizeColumnsToContents()
             conn.close()
         except Exception as e:
-            QtWidgets.QMessageBox.critical(
-                self, "Error", f"No se pudo cargar los precios:\n{e}"
-            )
+            QtWidgets.QMessageBox.critical(self, "Error", f"No se pudo cargar el stock:\n{e}")
 
-    def volver(self):
+    def volver_a_cliente(self):
         self.close()
         if self.parent():
             self.parent().show()
-
-
-
 
 
 

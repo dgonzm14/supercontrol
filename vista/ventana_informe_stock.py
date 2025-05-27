@@ -1,6 +1,6 @@
 import csv
 from PyQt5 import QtWidgets
-from informe_stock import Ui_InformeStockWindow  # tu archivo generado
+from controlador.informe_stock import Ui_InformeStockWindow  # tu archivo generado
 
 class VentanaInformeStock(QtWidgets.QDialog):
     def __init__(self, parent=None, conexion=None):

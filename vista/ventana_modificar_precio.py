@@ -1,5 +1,5 @@
 from PyQt5 import QtWidgets
-from modificar_precio import Ui_ModificarPrecioWindow
+from controlador.modificar_precio import Ui_ModificarPrecioWindow
 import pyodbc
 
 class VentanaModificarPrecio(QtWidgets.QDialog):

@@ -3,7 +3,7 @@ print("ventana_mod_stock2.py cargado correctamente")
 
 
 from PyQt5 import QtWidgets
-from modificar_stock import Ui_ModificarStockWindow
+from controlador.modificar_stock import Ui_ModificarStockWindow
 import pyodbc
 
 class VentanaModificarStock(QtWidgets.QDialog):
