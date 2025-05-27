@@ -15,33 +15,46 @@ from ventana_mod_stock2 import VentanaModificarStock
 from aniadir_producto import Ui_AniadirProductoDialog
 from ventana_aniadir_producto import VentanaAniadirProducto
 from ventana_modificar_precio import VentanaModificarPrecio
-from ventana_informe_stock import VentanaInformeStock  # IMPORTACIÓN NUEVA
-from ventana_valor_stock import VentanaValorStock      # IMPORTACIÓN VENTANA VALOR STOCK
+from ventana_informe_stock import VentanaInformeStock
+from ventana_valor_stock import VentanaValorStock
 
-# Ojo: sin ñ, con 'aniadir'
+# Patrón Singleton para la base de datos
+class SingletonMeta(type):
+    _instances = {}
 
-def conectar_bd():
-    try:
-        conn = pyodbc.connect(
-            'DRIVER={SQL Server};'
-            'SERVER=GOXUEL\\SQLEXPRESS;'
-            'DATABASE=SuperControl;'
-            'Trusted_Connection=yes;'
-        )
-        return conn
-    except Exception as e:
-        print("Error al conectar a la base de datos:", e)
-        return None
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            instance = super().__call__(*args, **kwargs)
+            cls._instances[cls] = instance
+        return cls._instances[cls]
 
-def cerrar_conexion(conn):
-    if conn:
-        conn.close()
+class Database(metaclass=SingletonMeta):
+    def __init__(self):
+        try:
+            self.conn = pyodbc.connect(
+                'DRIVER={SQL Server};'
+                'SERVER=GOXUEL\\SQLEXPRESS;'
+                'DATABASE=SuperControl;'
+                'Trusted_Connection=yes;'
+            )
+        except Exception as e:
+            print("Error al conectar a la base de datos:", e)
+            self.conn = None
+
+    def get_connection(self):
+        return self.conn
+
+    def close_connection(self):
+        if self.conn:
+            self.conn.close()
+            self.conn = None
 
 class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.conn = conectar_bd()
+        self.db = Database()             # Instancia singleton
+        self.conn = self.db.get_connection()
 
         self.btn_login.clicked.connect(self.login)
         self.btn_registrar.clicked.connect(self.abrir_registro)
@@ -106,7 +119,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
 
             self.ui_rol.btn_modificar_precio.clicked.connect(self.abrir_modificar_precio)
             self.ui_rol.btn_generar_informe_stock.clicked.connect(self.abrir_informe_stock)
-            self.ui_rol.btn_calcular_valor_stock.clicked.connect(self.abrir_valor_stock)  # BOTÓN NUEVO
+            self.ui_rol.btn_calcular_valor_stock.clicked.connect(self.abrir_valor_stock)
 
         self.ui_rol.btn_volver.clicked.connect(self.volver_login_desde_rol)
         self.ui_rol.btn_salir.clicked.connect(self.salir)
@@ -225,7 +238,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
         QtCore.QCoreApplication.quit()
 
     def closeEvent(self, event):
-        cerrar_conexion(self.conn)
+        self.db.close_connection()
 
 if __name__ == "__main__":
     import sys
@@ -233,6 +246,7 @@ if __name__ == "__main__":
     ventana = MainWindow()
     ventana.show()
     sys.exit(app.exec_())
+
 
 
 
