@@ -14,9 +14,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_JefeWindow(object):
     def setupUi(self, JefeWindow):
         JefeWindow.setObjectName("JefeWindow")
-        JefeWindow.resize(366, 238)
+        JefeWindow.resize(366, 270)
         self.verticalLayoutWidget = QtWidgets.QWidget(JefeWindow)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(20, 30, 291, 161))
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(20, 20, 291, 221))
         self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
@@ -33,6 +33,9 @@ class Ui_JefeWindow(object):
         self.btn_calcular_valor_stock = QtWidgets.QPushButton(self.verticalLayoutWidget)
         self.btn_calcular_valor_stock.setObjectName("btn_calcular_valor_stock")
         self.verticalLayout.addWidget(self.btn_calcular_valor_stock)
+        self.btn_gestionar_usuarios = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.btn_gestionar_usuarios.setObjectName("btn_gestionar_usuarios")
+        self.verticalLayout.addWidget(self.btn_gestionar_usuarios)
         self.btn_volver = QtWidgets.QPushButton(self.verticalLayoutWidget)
         self.btn_volver.setObjectName("btn_volver")
         self.verticalLayout.addWidget(self.btn_volver)
@@ -45,10 +48,13 @@ class Ui_JefeWindow(object):
 
     def retranslateUi(self, JefeWindow):
         _translate = QtCore.QCoreApplication.translate
-        JefeWindow.setWindowTitle(_translate("JefeWindow", "Dialog"))
+        JefeWindow.setWindowTitle(_translate("JefeWindow", "Panel Jefe"))
         self.label.setText(_translate("JefeWindow", "Panel Jefe"))
         self.btn_generar_informe_stock.setText(_translate("JefeWindow", "Generar Informe Stock"))
         self.btn_modificar_precio.setText(_translate("JefeWindow", "Modificar Precio Producto"))
         self.btn_calcular_valor_stock.setText(_translate("JefeWindow", "Calcular Valor Total del Stock"))
+        self.btn_gestionar_usuarios.setText(_translate("JefeWindow", "Gestionar Usuarios"))
         self.btn_volver.setText(_translate("JefeWindow", "Volver"))
         self.btn_salir.setText(_translate("JefeWindow", "Salir"))
+
+

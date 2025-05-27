@@ -1,4 +1,4 @@
-# ventana_precios.py
+
 
 from PyQt5 import QtWidgets
 from controlador.consultar_precios import Ui_ConsultarPreciosWindow

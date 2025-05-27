@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>GestionarUsuariosWindow</class>
+ <widget class="QDialog" name="GestionarUsuariosWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Gestionar Usuarios</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab_aniadir">
+      <attribute name="title">
+       <string>Añadir Usuario</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout_aniadir">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_nombre">
+         <property name="text">
+          <string>Nombre:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="line_nombre"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_apellido">
+         <property name="text">
+          <string>Apellido:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="line_apellido"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_usuario">
+         <property name="text">
+          <string>Usuario:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="line_usuario"/>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_contrasena">
+         <property name="text">
+          <string>Contraseña:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="line_contrasena"/>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_email">
+         <property name="text">
+          <string>Email:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="line_email"/>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_telefono">
+         <property name="text">
+          <string>Teléfono:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLineEdit" name="line_telefono"/>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="label_rol">
+         <property name="text">
+          <string>Rol:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QComboBox" name="combo_rol">
+         <item>
+          <property name="text">
+           <string>cliente</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>empleado</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>jefe</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="7" column="1">
+        <widget class="QPushButton" name="btn_aniadir">
+         <property name="text">
+          <string>Añadir Usuario</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_eliminar">
+      <attribute name="title">
+       <string>Eliminar Usuario</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_eliminar">
+       <item>
+        <widget class="QTableWidget" name="tabla_usuarios">
+         <column>
+          <property name="text">
+           <string>Usuario</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Rol</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btn_eliminar">
+         <property name="text">
+          <string>Eliminar Usuario Seleccionado</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

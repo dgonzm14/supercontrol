@@ -1,7 +1,6 @@
 from PyQt5 import QtCore, QtWidgets
-from controlador.login import Ui_label_usuario
+from controlador.login import Ui_label_usuario  # Asumo que login.py contiene Ui_label_usuario para login
 from controlador.registrar import Ui_Dialog
-
 from controlador.cliente import Ui_ClienteWindow
 from controlador.empleado import Ui_EmpleadoWindow
 from controlador.jefe import Ui_JefeWindow
@@ -13,9 +12,11 @@ from vista.ventana_aniadir_producto import VentanaAniadirProducto
 from vista.ventana_modificar_precio import VentanaModificarPrecio
 from vista.ventana_informe_stock import VentanaInformeStock
 from vista.ventana_valor_stock import VentanaValorStock
-from vista.ventana_eliminar_producto import VentanaEliminarProducto  # <- NUEVO
+from vista.ventana_eliminar_producto import VentanaEliminarProducto
+from vista.ventana_gestionar_usuarios import VentanaGestionarUsuarios
 
 from modelo.sqlserver_db import SqlServerDatabase
+
 
 class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
     def __init__(self):
@@ -80,16 +81,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
             self.ui_rol = Ui_EmpleadoWindow()
             self.ui_rol.setupUi(self.ventana_rol)
             self.ui_rol.btn_modificar_stock.clicked.connect(self.abrir_modificar_stock)
-            self.ui_rol.btn_aniadir_producto.clicked.connect(self.abrir_aniadir_producto)  # corregido btn_aniadir_producto
+            self.ui_rol.btn_aniadir_producto.clicked.connect(self.abrir_aniadir_producto)
             self.ui_rol.btn_eliminar_producto.clicked.connect(self.abrir_eliminar_producto)
 
-        else:  # jefe
+        else:  
             self.ventana_rol = QtWidgets.QDialog(self)
             self.ui_rol = Ui_JefeWindow()
             self.ui_rol.setupUi(self.ventana_rol)
             self.ui_rol.btn_modificar_precio.clicked.connect(self.abrir_modificar_precio)
             self.ui_rol.btn_generar_informe_stock.clicked.connect(self.abrir_informe_stock)
             self.ui_rol.btn_calcular_valor_stock.clicked.connect(self.abrir_valor_stock)
+            self.ui_rol.btn_gestionar_usuarios.clicked.connect(self.abrir_gestionar_usuarios)
 
         self.ui_rol.btn_volver.clicked.connect(self.volver_login_desde_rol)
         self.ui_rol.btn_salir.clicked.connect(self.salir)
@@ -122,7 +124,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
     def abrir_eliminar_producto(self):
         self.ventana_rol.hide()
         ventana = VentanaEliminarProducto(parent=self.ventana_rol, conexion=self.conn)
-        # Se asume que VentanaEliminarProducto implementa la eliminación con manejo de FK
         ventana.exec_()
         self.ventana_rol.show()
 
@@ -141,6 +142,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
     def abrir_valor_stock(self):
         self.ventana_rol.hide()
         ventana = VentanaValorStock(conexion=self.conn, parent=self)
+        ventana.exec_()
+        self.ventana_rol.show()
+
+    def abrir_gestionar_usuarios(self):
+        self.ventana_rol.hide()
+        ventana = VentanaGestionarUsuarios(parent=self, conexion=self.conn)
         ventana.exec_()
         self.ventana_rol.show()
 
@@ -198,12 +205,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
     def closeEvent(self, event):
         self.db.close()
 
+
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     ventana = MainWindow()
     ventana.show()
     sys.exit(app.exec_())
+
+
+
+
+
 
 
 

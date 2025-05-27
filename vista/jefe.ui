@@ -7,19 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>366</width>
-    <height>238</height>
+    <height>270</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Panel Jefe</string>
   </property>
   <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>30</y>
+     <y>20</y>
      <width>291</width>
-     <height>161</height>
+     <height>221</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -52,6 +52,13 @@
      </widget>
     </item>
     <item>
+     <widget class="QPushButton" name="btn_gestionar_usuarios">
+      <property name="text">
+       <string>Gestionar Usuarios</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QPushButton" name="btn_volver">
       <property name="text">
        <string>Volver</string>
@@ -71,3 +78,4 @@
  <resources/>
  <connections/>
 </ui>
+
