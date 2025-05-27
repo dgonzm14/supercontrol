@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ModificarStockWindow</class>
+ <widget class="QDialog" name="ModificarStockWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>200</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Modificar Stock</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <!-- Título -->
+   <item>
+    <widget class="QLabel" name="label_titulo">
+     <property name="text">
+      <string>Modificar Stock de Producto</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <bold>true</bold>
+       <weight>75</weight>
+      </font>
+     </property>
+    </widget>
+   </item>
+   <!-- Selector de producto -->
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_producto">
+       <property name="text"><string>Producto:</string></property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QComboBox" name="combo_productos"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_cantidad">
+       <property name="text"><string>Nueva Cantidad:</string></property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QSpinBox" name="spin_cantidad">
+       <property name="minimum"><number>0</number></property>
+       <property name="maximum"><number>100000</number></property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <!-- Botones -->
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="btn_modificar">
+       <property name="text"><string>Modificar</string></property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_volver">
+       <property name="text"><string>Volver</string></property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_salir">
+       <property name="text"><string>Salir</string></property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
