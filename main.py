@@ -1,4 +1,3 @@
-import pyodbc
 from PyQt5 import QtCore, QtWidgets
 from login import Ui_label_usuario
 from registrar import Ui_Dialog
@@ -12,48 +11,27 @@ from jefe import Ui_JefeWindow
 from ventana_consultar_stock import VentanaConsultarStock
 from ventana_precios import VentanaConsultarPrecios
 from ventana_mod_stock2 import VentanaModificarStock
-from aniadir_producto import Ui_AniadirProductoDialog
 from ventana_aniadir_producto import VentanaAniadirProducto
 from ventana_modificar_precio import VentanaModificarPrecio
 from ventana_informe_stock import VentanaInformeStock
 from ventana_valor_stock import VentanaValorStock
 
-# Patrón Singleton para la base de datos
-class SingletonMeta(type):
-    _instances = {}
-
-    def __call__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            instance = super().__call__(*args, **kwargs)
-            cls._instances[cls] = instance
-        return cls._instances[cls]
-
-class Database(metaclass=SingletonMeta):
-    def __init__(self):
-        try:
-            self.conn = pyodbc.connect(
-                'DRIVER={SQL Server};'
-                'SERVER=GOXUEL\\SQLEXPRESS;'
-                'DATABASE=SuperControl;'
-                'Trusted_Connection=yes;'
-            )
-        except Exception as e:
-            print("Error al conectar a la base de datos:", e)
-            self.conn = None
-
-    def get_connection(self):
-        return self.conn
-
-    def close_connection(self):
-        if self.conn:
-            self.conn.close()
-            self.conn = None
+# Capa de abstracción con singleton
+from sqlserver_db import SqlServerDatabase
 
 class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.db = Database()             # Instancia singleton
+
+        connection_string = (
+            'DRIVER={SQL Server};'
+            'SERVER=GOXUEL\\SQLEXPRESS;'
+            'DATABASE=SuperControl;'
+            'Trusted_Connection=yes;'
+        )
+        self.db = SqlServerDatabase(connection_string)
+        self.db.connect()
         self.conn = self.db.get_connection()
 
         self.btn_login.clicked.connect(self.login)
@@ -72,10 +50,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
             return
 
         cursor = self.conn.cursor()
-        cursor.execute(
-            "SELECT id_usuario, rol FROM usuarios WHERE usuario = ? AND contrasena = ?",
-            (usuario, contrasena)
-        )
+        cursor.execute("SELECT id_usuario, rol FROM usuarios WHERE usuario = ? AND contrasena = ?", (usuario, contrasena))
         result = cursor.fetchone()
         if not result:
             QtWidgets.QMessageBox.critical(self, "Error", "Usuario o contraseña incorrectos.")
@@ -91,7 +66,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
         self.abrir_ventana_rol(rol_registrado.lower())
 
     def abrir_ventana_rol(self, rol):
-        print(f"Abriendo ventana para rol: {rol}")
         if self.ventana_rol:
             self.ventana_rol.close()
             self.ventana_rol = None
@@ -100,7 +74,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
             self.ventana_rol = QtWidgets.QDialog(self)
             self.ui_rol = Ui_ClienteWindow()
             self.ui_rol.setupUi(self.ventana_rol)
-
             self.ui_rol.btn_consultar_stock.clicked.connect(self.consultar_stock)
             self.ui_rol.btn_consultar_precios.clicked.connect(self.consultar_precios)
 
@@ -108,7 +81,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
             self.ventana_rol = QtWidgets.QDialog(self)
             self.ui_rol = Ui_EmpleadoWindow()
             self.ui_rol.setupUi(self.ventana_rol)
-
             self.ui_rol.btn_modificar_stock.clicked.connect(self.abrir_modificar_stock)
             self.ui_rol.btn_anadir_producto.clicked.connect(self.abrir_aniadir_producto)
 
@@ -116,14 +88,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
             self.ventana_rol = QtWidgets.QDialog(self)
             self.ui_rol = Ui_JefeWindow()
             self.ui_rol.setupUi(self.ventana_rol)
-
             self.ui_rol.btn_modificar_precio.clicked.connect(self.abrir_modificar_precio)
             self.ui_rol.btn_generar_informe_stock.clicked.connect(self.abrir_informe_stock)
             self.ui_rol.btn_calcular_valor_stock.clicked.connect(self.abrir_valor_stock)
 
         self.ui_rol.btn_volver.clicked.connect(self.volver_login_desde_rol)
         self.ui_rol.btn_salir.clicked.connect(self.salir)
-
         self.ventana_rol.show()
 
     def consultar_stock(self):
@@ -145,55 +115,37 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
         self.ventana_rol.show()
 
     def abrir_aniadir_producto(self):
-        if self.ventana_rol:
-            self.ventana_rol.hide()
-
+        self.ventana_rol.hide()
         ventana = VentanaAniadirProducto(parent=self, conexion=self.conn)
         ventana.exec_()
-
-        if self.ventana_rol:
-            self.ventana_rol.show()
+        self.ventana_rol.show()
 
     def abrir_modificar_precio(self):
-        if self.ventana_rol:
-            self.ventana_rol.hide()
-
+        self.ventana_rol.hide()
         ventana = VentanaModificarPrecio(parent=self, conexion=self.conn)
         ventana.exec_()
-
-        if self.ventana_rol:
-            self.ventana_rol.show()
+        self.ventana_rol.show()
 
     def abrir_informe_stock(self):
-        if self.ventana_rol:
-            self.ventana_rol.hide()
-
-        ventana_informe = VentanaInformeStock(parent=self, conexion=self.conn)
-        ventana_informe.exec_()
-
-        if self.ventana_rol:
-            self.ventana_rol.show()
+        self.ventana_rol.hide()
+        ventana = VentanaInformeStock(parent=self, conexion=self.conn)
+        ventana.exec_()
+        self.ventana_rol.show()
 
     def abrir_valor_stock(self):
-        if self.ventana_rol:
-            self.ventana_rol.hide()
-
-        ventana_valor = VentanaValorStock(conexion=self.conn, parent=self)
-        ventana_valor.exec_()
-
-        if self.ventana_rol:
-            self.ventana_rol.show()
+        self.ventana_rol.hide()
+        ventana = VentanaValorStock(conexion=self.conn, parent=self)
+        ventana.exec_()
+        self.ventana_rol.show()
 
     def abrir_registro(self):
         self.hide()
         self.dialog_registro = QtWidgets.QDialog(self)
         self.ui_registro = Ui_Dialog()
         self.ui_registro.setupUi(self.dialog_registro)
-
         self.ui_registro.btn_volver.clicked.connect(self.volver_login)
         self.ui_registro.btn_salir.clicked.connect(self.salir)
         self.ui_registro.btn_registrar.clicked.connect(self.registrar_usuario)
-
         self.dialog_registro.exec_()
 
     def registrar_usuario(self):
@@ -238,7 +190,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
         QtCore.QCoreApplication.quit()
 
     def closeEvent(self, event):
-        self.db.close_connection()
+        self.db.close()
 
 if __name__ == "__main__":
     import sys
@@ -246,6 +198,7 @@ if __name__ == "__main__":
     ventana = MainWindow()
     ventana.show()
     sys.exit(app.exec_())
+
 
 
 
