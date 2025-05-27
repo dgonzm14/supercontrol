@@ -1,5 +1,5 @@
 # ventana_mod_stock.py
-print("ventana_mod_stock2.py cargado correctamente")
+
 
 
 from PyQt5 import QtWidgets
