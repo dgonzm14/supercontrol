@@ -45,6 +45,13 @@
      </widget>
     </item>
     <item>
+     <widget class="QPushButton" name="btn_calcular_valor_stock">
+      <property name="text">
+       <string>Calcular Valor Total del Stock</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QPushButton" name="btn_volver">
       <property name="text">
        <string>Volver</string>

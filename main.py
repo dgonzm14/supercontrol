@@ -16,6 +16,7 @@ from aniadir_producto import Ui_AniadirProductoDialog
 from ventana_aniadir_producto import VentanaAniadirProducto
 from ventana_modificar_precio import VentanaModificarPrecio
 from ventana_informe_stock import VentanaInformeStock  # IMPORTACIÓN NUEVA
+from ventana_valor_stock import VentanaValorStock      # IMPORTACIÓN VENTANA VALOR STOCK
 
 # Ojo: sin ñ, con 'aniadir'
 
@@ -104,7 +105,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
             self.ui_rol.setupUi(self.ventana_rol)
 
             self.ui_rol.btn_modificar_precio.clicked.connect(self.abrir_modificar_precio)
-            self.ui_rol.btn_generar_informe_stock.clicked.connect(self.abrir_informe_stock)  # BOTÓN NUEVO
+            self.ui_rol.btn_generar_informe_stock.clicked.connect(self.abrir_informe_stock)
+            self.ui_rol.btn_calcular_valor_stock.clicked.connect(self.abrir_valor_stock)  # BOTÓN NUEVO
 
         self.ui_rol.btn_volver.clicked.connect(self.volver_login_desde_rol)
         self.ui_rol.btn_salir.clicked.connect(self.salir)
@@ -155,6 +157,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
 
         ventana_informe = VentanaInformeStock(parent=self, conexion=self.conn)
         ventana_informe.exec_()
+
+        if self.ventana_rol:
+            self.ventana_rol.show()
+
+    def abrir_valor_stock(self):
+        if self.ventana_rol:
+            self.ventana_rol.hide()
+
+        ventana_valor = VentanaValorStock(conexion=self.conn, parent=self)
+        ventana_valor.exec_()
 
         if self.ventana_rol:
             self.ventana_rol.show()
@@ -221,6 +233,7 @@ if __name__ == "__main__":
     ventana = MainWindow()
     ventana.show()
     sys.exit(app.exec_())
+
 
 
 
