@@ -45,6 +45,13 @@
      </widget>
     </item>
     <item>
+     <widget class="QPushButton" name="btn_eliminar_producto">
+      <property name="text">
+       <string>Eliminar producto</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QPushButton" name="btn_volver">
       <property name="text">
        <string>Volver</string>
@@ -66,3 +73,4 @@
  <resources/>
  <connections/>
 </ui>
+

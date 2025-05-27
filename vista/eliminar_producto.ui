@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>EliminarProductoWindow</class>
+ <widget class="QDialog" name="EliminarProductoWindow">
+  <property name="windowTitle">
+   <string>Eliminar Producto</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="label_titulo">
+     <property name="text">
+      <string>Selecciona un producto para eliminar:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QComboBox" name="combo_productos"/>
+   </item>
+   <item>
+    <widget class="QPushButton" name="btn_eliminar">
+     <property name="text">
+      <string>Eliminar</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="btn_volver">
+     <property name="text">
+      <string>Volver</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

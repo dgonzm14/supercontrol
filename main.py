@@ -2,11 +2,9 @@ from PyQt5 import QtCore, QtWidgets
 from controlador.login import Ui_label_usuario
 from controlador.registrar import Ui_Dialog
 
-
 from controlador.cliente import Ui_ClienteWindow
 from controlador.empleado import Ui_EmpleadoWindow
 from controlador.jefe import Ui_JefeWindow
-
 
 from vista.ventana_consultar_stock import VentanaConsultarStock
 from vista.ventana_precios import VentanaConsultarPrecios
@@ -15,7 +13,7 @@ from vista.ventana_aniadir_producto import VentanaAniadirProducto
 from vista.ventana_modificar_precio import VentanaModificarPrecio
 from vista.ventana_informe_stock import VentanaInformeStock
 from vista.ventana_valor_stock import VentanaValorStock
-
+from vista.ventana_eliminar_producto import VentanaEliminarProducto  # <- NUEVO
 
 from modelo.sqlserver_db import SqlServerDatabase
 
@@ -78,13 +76,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
             self.ui_rol.btn_consultar_precios.clicked.connect(self.consultar_precios)
 
         elif rol == "empleado":
-            self.ventana_rol = QtWidgets.QDialog(self)
+            self.ventana_rol = QtWidgets.QMainWindow(self)
             self.ui_rol = Ui_EmpleadoWindow()
             self.ui_rol.setupUi(self.ventana_rol)
             self.ui_rol.btn_modificar_stock.clicked.connect(self.abrir_modificar_stock)
-            self.ui_rol.btn_anadir_producto.clicked.connect(self.abrir_aniadir_producto)
+            self.ui_rol.btn_aniadir_producto.clicked.connect(self.abrir_aniadir_producto)  # corregido btn_aniadir_producto
+            self.ui_rol.btn_eliminar_producto.clicked.connect(self.abrir_eliminar_producto)
 
-        else:  
+        else:  # jefe
             self.ventana_rol = QtWidgets.QDialog(self)
             self.ui_rol = Ui_JefeWindow()
             self.ui_rol.setupUi(self.ventana_rol)
@@ -117,6 +116,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
     def abrir_aniadir_producto(self):
         self.ventana_rol.hide()
         ventana = VentanaAniadirProducto(parent=self, conexion=self.conn)
+        ventana.exec_()
+        self.ventana_rol.show()
+
+    def abrir_eliminar_producto(self):
+        self.ventana_rol.hide()
+        ventana = VentanaEliminarProducto(parent=self.ventana_rol, conexion=self.conn)
+        # Se asume que VentanaEliminarProducto implementa la eliminación con manejo de FK
         ventana.exec_()
         self.ventana_rol.show()
 
@@ -198,6 +204,9 @@ if __name__ == "__main__":
     ventana = MainWindow()
     ventana.show()
     sys.exit(app.exec_())
+
+
+
 
 
 
