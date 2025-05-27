@@ -13,7 +13,7 @@ class VentanaModificarPrecio(QtWidgets.QDialog):
         self.ui.btn_volver.clicked.connect(self.volver)
         self.ui.btn_actualizar.clicked.connect(self.actualizar_precio)
 
-        self.productos = []  # para guardar tuplas (id, nombre, descripción, precio)
+        self.productos = []  
         self.cargar_productos()
 
     def cargar_productos(self):
@@ -54,7 +54,7 @@ class VentanaModificarPrecio(QtWidgets.QDialog):
             QtWidgets.QMessageBox.warning(self, "Formato incorrecto", "El precio debe ser un número decimal mayor a 0.")
             return
 
-        id_producto = self.productos[fila][0]  # obtener el id_producto
+        id_producto = self.productos[fila][0]  
 
         try:
             cursor = self.conn.cursor()

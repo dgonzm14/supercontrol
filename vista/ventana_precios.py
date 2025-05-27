@@ -24,7 +24,7 @@ class VentanaConsultarPrecios(QtWidgets.QDialog):
                 'Trusted_Connection=yes;'
             )
             cursor = conn.cursor()
-            # Atención aquí: debe ser nombre_producto, NO nombre
+            
             cursor.execute("""
                 SELECT nombre_producto AS Producto, precio AS Precio
                 FROM productos

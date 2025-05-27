@@ -1,4 +1,4 @@
-# core/db_interface.py
+
 from abc import ABC, abstractmethod
 
 class DatabaseInterface(ABC):

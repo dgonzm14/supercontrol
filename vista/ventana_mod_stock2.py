@@ -1,4 +1,4 @@
-# ventana_mod_stock.py
+
 
 
 
@@ -12,12 +12,12 @@ class VentanaModificarStock(QtWidgets.QDialog):
         self.ui = Ui_ModificarStockWindow()
         self.ui.setupUi(self)
 
-        # Conecta botones
+        
         self.ui.btn_modificar.clicked.connect(self.modificar_stock)
         self.ui.btn_volver.clicked.connect(self.volver)
         self.ui.btn_salir.clicked.connect(QtWidgets.qApp.quit)
 
-        # Carga productos en el combo
+        
         self.productos = []
         self.cargar_productos()
 

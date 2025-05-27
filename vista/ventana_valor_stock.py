@@ -1,21 +1,21 @@
 from PyQt5 import QtWidgets, QtCore
-import pyodbc  # O el conector que uses
+import pyodbc  
 
 class VentanaValorStock(QtWidgets.QDialog):
-    def __init__(self, conexion, parent=None):  # <-- Añadido parent aquí
-        super().__init__(parent)               # <-- Pasar parent al padre
+    def __init__(self, conexion, parent=None):  
+        super().__init__(parent)               
         self.conexion = conexion
         self.setWindowTitle("Valor Total del Stock")
         self.resize(400, 150)
 
-        # Layout vertical
+        
         layout = QtWidgets.QVBoxLayout()
 
-        # Botón para calcular el valor total
+        
         self.boton_calcular = QtWidgets.QPushButton("Calcular valor total del stock")
         layout.addWidget(self.boton_calcular)
 
-        # Etiqueta para mostrar el resultado
+        
         self.label_resultado = QtWidgets.QLabel("Valor total del stock: ")
         self.label_resultado.setAlignment(QtCore.Qt.AlignCenter)
         self.label_resultado.setMinimumHeight(40)
@@ -23,7 +23,7 @@ class VentanaValorStock(QtWidgets.QDialog):
 
         self.setLayout(layout)
 
-        # Conectar el botón a la función que realiza el cálculo
+        
         self.boton_calcular.clicked.connect(self.calcular_valor_stock)
 
     def calcular_valor_stock(self):

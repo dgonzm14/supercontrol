@@ -1,8 +1,8 @@
-# sqlserver_db.py
+
 import pyodbc
 from abc import ABC, ABCMeta
 
-# 🔁 1. Modificamos SingletonMeta para que herede de ABCMeta
+
 class SingletonMeta(ABCMeta):
     _instances = {}
     def __call__(cls, *args, **kwargs):
@@ -11,11 +11,11 @@ class SingletonMeta(ABCMeta):
             cls._instances[cls] = instance
         return cls._instances[cls]
 
-# 🔁 2. Interfaz base (opcional, pero si la usas, hereda de ABC)
+
 class DatabaseInterface(ABC):
     pass
 
-# ✅ 3. Clase Singleton que implementa DatabaseInterface
+
 class SqlServerDatabase(DatabaseInterface, metaclass=SingletonMeta):
     def __init__(self, connection_string):
         self.connection_string = connection_string

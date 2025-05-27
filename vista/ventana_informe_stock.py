@@ -9,21 +9,21 @@ class VentanaInformeStock(QtWidgets.QDialog):
         self.ui.setupUi(self)
         self.conn = conexion
 
-        # Configurar tabla
+        
         self.ui.tabla_stock.setColumnCount(4)
         self.ui.tabla_stock.setHorizontalHeaderLabels(["Nombre", "Precio", "Descripción", "Stock"])
 
-        # Conectar botones
+        
         self.ui.btn_exportar.clicked.connect(self.exportar_csv)
         self.ui.btn_cerrar.clicked.connect(self.close)
 
-        # Cargar datos
+        
         self.cargar_datos()
 
     def cargar_datos(self):
         try:
             cursor = self.conn.cursor()
-            # Consulta que junta productos con stock
+            
             cursor.execute("""
                 SELECT p.nombre_producto, p.precio, p.descripcion_producto, 
                        ISNULL(s.cantidad, 0) as stock
@@ -51,9 +51,9 @@ class VentanaInformeStock(QtWidgets.QDialog):
         try:
             with open(path, mode='w', newline='', encoding='utf-8') as archivo:
                 writer = csv.writer(archivo)
-                # Escribir encabezado
+                
                 writer.writerow(["Nombre", "Precio", "Descripción", "Stock"])
-                # Escribir filas
+                
                 for fila in range(self.ui.tabla_stock.rowCount()):
                     rowdata = []
                     for col in range(self.ui.tabla_stock.columnCount()):

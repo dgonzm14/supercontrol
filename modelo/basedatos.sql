@@ -1,24 +1,24 @@
--- Cambiar a la base de datos 'master' para poder eliminar 'SuperControl'
+
 USE master;
 GO
 
--- Cerrar conexiones a la base de datos 'SuperControl' (Esto fuerza la desconexi�n)
+
 ALTER DATABASE SuperControl SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
 GO
 
--- Eliminar la base de datos 'SuperControl'
+
 DROP DATABASE IF EXISTS SuperControl;
 GO
 
--- Crear la base de datos 'SuperControl' nuevamente
+
 CREATE DATABASE SuperControl;
 GO
 
--- Usar la base de datos reci�n creada
+
 USE SuperControl;
 GO
 
--- Crear las tablas necesarias
+
 
 CREATE TABLE clientes (
     id_cliente INT PRIMARY KEY IDENTITY(1,1),

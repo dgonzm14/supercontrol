@@ -22,7 +22,7 @@ class VentanaConsultarStock(QtWidgets.QDialog):
                 'Trusted_Connection=yes;'
             )
             cursor = conn.cursor()
-            # Solo seleccionamos las columnas deseadas
+            
             cursor.execute("""
                 SELECT p.nombre_producto, s.cantidad, p.descripcion_producto
                 FROM productos p

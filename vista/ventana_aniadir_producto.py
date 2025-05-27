@@ -23,18 +23,18 @@ class VentanaAniadirProducto(QtWidgets.QDialog):
         try:
             cursor = self.conn.cursor()
 
-            # Insertar producto (sin precio)
+            
             cursor.execute(
                 "INSERT INTO productos (nombre_producto, descripcion_producto) VALUES (?, ?)",
                 (nombre, descripcion)
             )
             self.conn.commit()
 
-            # Obtener el id del producto insertado
+           
             cursor.execute("SELECT @@IDENTITY")
             id_producto = cursor.fetchone()[0]
 
-            # Insertar precio predeterminado
+            
             cursor.execute(
                 "INSERT INTO precios (id_producto, precio) VALUES (?, ?)",
                 (id_producto, 1.00)
