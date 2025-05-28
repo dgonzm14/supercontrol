@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtWidgets
-from controlador.login import Ui_label_usuario  # Asumo que login.py contiene Ui_label_usuario para login
+from controlador.login import Ui_label_usuario  
 from controlador.registrar import Ui_Dialog
 from controlador.cliente import Ui_ClienteWindow
 from controlador.empleado import Ui_EmpleadoWindow
@@ -212,75 +212,3 @@ if __name__ == "__main__":
     ventana = MainWindow()
     ventana.show()
     sys.exit(app.exec_())
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
