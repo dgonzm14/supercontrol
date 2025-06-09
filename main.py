@@ -1,19 +1,33 @@
 from PyQt5 import QtCore, QtWidgets
-from controlador.login import Ui_label_usuario  
-from controlador.registrar import Ui_Dialog
-from controlador.cliente import Ui_ClienteWindow
-from controlador.empleado import Ui_EmpleadoWindow
-from controlador.jefe import Ui_JefeWindow
+from vista.login import Ui_label_usuario  
+from vista.registrar import Ui_Dialog
+from vista.cliente import Ui_ClienteWindow
+from vista.empleado import Ui_EmpleadoWindow
+from vista.jefe import Ui_JefeWindow
+
+from controlador.login_controller import LoginController, RegistroController
+from controlador.eliminar_producto_controller import EliminarProductoController
+from controlador.informe_stock_controller import InformeStockController
+from controlador.modificar_precio_controller import ModificarPrecioController
+
+from controlador.consultar_precios_controller import ConsultarPreciosController
+from vista.ventana_consultar_precios import VentanaConsultarPrecios
 
 from vista.ventana_consultar_stock import VentanaConsultarStock
-from vista.ventana_precios import VentanaConsultarPrecios
-from vista.ventana_mod_stock2 import VentanaModificarStock
+from vista.ventana_mod_stock_modstock import VentanaModificarStockModStock 
+
 from vista.ventana_aniadir_producto import VentanaAniadirProducto
 from vista.ventana_modificar_precio import VentanaModificarPrecio
 from vista.ventana_informe_stock import VentanaInformeStock
 from vista.ventana_valor_stock import VentanaValorStock
 from vista.ventana_eliminar_producto import VentanaEliminarProducto
 from vista.ventana_gestionar_usuarios import VentanaGestionarUsuarios
+
+from modelo.dao.eliminar_producto_dao import EliminarProductoDAO
+from modelo.dao.informe_stock_dao import InformeStockDAO
+from modelo.dao.modificar_precio_dao import ModificarPrecioDAO
+from modelo.dao.producto_dao import ProductoDAO
+from modelo.dao.valor_stock_dao import ValorStockDAO
 
 from modelo.sqlserver_db import SqlServerDatabase
 
@@ -33,6 +47,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
         self.db.connect()
         self.conn = self.db.get_connection()
 
+        self.login_controller = LoginController(self.conn)
+        self.registro_controller = None
+
         self.btn_login.clicked.connect(self.login)
         self.btn_registrar.clicked.connect(self.abrir_registro)
         self.btn_salir.clicked.connect(self.salir)
@@ -44,25 +61,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
         contrasena = self.line_contrasena.text()
         rol_combo = self.combo_rol.currentText()
 
-        if not usuario or not contrasena:
-            QtWidgets.QMessageBox.warning(self, "Campos vacíos", "Por favor, ingresa usuario y contraseña.")
+        exito, mensaje, rol = self.login_controller.login(usuario, contrasena, rol_combo)
+        if not exito:
+            QtWidgets.QMessageBox.warning(self, "Error", mensaje)
             return
 
-        cursor = self.conn.cursor()
-        cursor.execute("SELECT id_usuario, rol FROM usuarios WHERE usuario = ? AND contrasena = ?", (usuario, contrasena))
-        result = cursor.fetchone()
-        if not result:
-            QtWidgets.QMessageBox.critical(self, "Error", "Usuario o contraseña incorrectos.")
-            return
-
-        _, rol_registrado = result
-        if rol_registrado.lower() != rol_combo.lower():
-            QtWidgets.QMessageBox.critical(self, "Error", "El rol seleccionado no coincide con el registro.")
-            return
-
-        QtWidgets.QMessageBox.information(self, "Éxito", f"Bienvenido, {usuario}!")
+        QtWidgets.QMessageBox.information(self, "Éxito", mensaje)
         self.hide()
-        self.abrir_ventana_rol(rol_registrado.lower())
+        self.abrir_ventana_rol(rol)
 
     def abrir_ventana_rol(self, rol):
         if self.ventana_rol:
@@ -80,11 +86,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
             self.ventana_rol = QtWidgets.QMainWindow(self)
             self.ui_rol = Ui_EmpleadoWindow()
             self.ui_rol.setupUi(self.ventana_rol)
-            self.ui_rol.btn_modificar_stock.clicked.connect(self.abrir_modificar_stock)
+
+            self.ui_rol.btn_modificar_stock.clicked.connect(self.abrir_modificar_stock_modstock)
             self.ui_rol.btn_aniadir_producto.clicked.connect(self.abrir_aniadir_producto)
             self.ui_rol.btn_eliminar_producto.clicked.connect(self.abrir_eliminar_producto)
 
-        else:  
+        else:  # jefe
             self.ventana_rol = QtWidgets.QDialog(self)
             self.ui_rol = Ui_JefeWindow()
             self.ui_rol.setupUi(self.ventana_rol)
@@ -98,19 +105,21 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
         self.ventana_rol.show()
 
     def consultar_stock(self):
-        ventana = VentanaConsultarStock(self)
+        ventana = VentanaConsultarStock(self.conn, self)
         self.hide()
         ventana.exec_()
         self.show()
 
     def consultar_precios(self):
-        ventana = VentanaConsultarPrecios(self)
+        producto_dao = ProductoDAO(self.conn)
+        controlador = ConsultarPreciosController(producto_dao)
+        ventana = VentanaConsultarPrecios(controller=controlador, parent=self)
         self.hide()
         ventana.exec_()
         self.show()
 
-    def abrir_modificar_stock(self):
-        ventana = VentanaModificarStock(self.ventana_rol)
+    def abrir_modificar_stock_modstock(self):
+        ventana = VentanaModificarStockModStock(self.ventana_rol)
         self.ventana_rol.hide()
         ventana.exec_()
         self.ventana_rol.show()
@@ -129,19 +138,26 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
 
     def abrir_modificar_precio(self):
         self.ventana_rol.hide()
-        ventana = VentanaModificarPrecio(parent=self, conexion=self.conn)
+        dao = ModificarPrecioDAO(self.conn)
+        controller = ModificarPrecioController(dao)
+        ventana = VentanaModificarPrecio(parent=self, controller=controller)
         ventana.exec_()
         self.ventana_rol.show()
 
     def abrir_informe_stock(self):
         self.ventana_rol.hide()
-        ventana = VentanaInformeStock(parent=self, conexion=self.conn)
-        ventana.exec_()
+        vista = VentanaInformeStock(parent=self)
+        dao = InformeStockDAO(self.conn)
+        controller = InformeStockController(vista=vista, dao=dao)
+        vista.exec_()
         self.ventana_rol.show()
 
     def abrir_valor_stock(self):
+        from controlador.valor_stock_controller import ValorStockController
+        dao = ValorStockDAO(self.conn)
+        controller = ValorStockController(dao)
+        ventana = VentanaValorStock(controller=controller, parent=self)
         self.ventana_rol.hide()
-        ventana = VentanaValorStock(conexion=self.conn, parent=self)
         ventana.exec_()
         self.ventana_rol.show()
 
@@ -156,6 +172,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
         self.dialog_registro = QtWidgets.QDialog(self)
         self.ui_registro = Ui_Dialog()
         self.ui_registro.setupUi(self.dialog_registro)
+        self.registro_controller = RegistroController(self.conn)
+
         self.ui_registro.btn_volver.clicked.connect(self.volver_login)
         self.ui_registro.btn_salir.clicked.connect(self.salir)
         self.ui_registro.btn_registrar.clicked.connect(self.registrar_usuario)
@@ -164,29 +182,20 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
     def registrar_usuario(self):
         campos = [
             self.ui_registro.line_nombre.text(),
-            self.ui_registro.line_apellidos.text(),
+            self.ui_registro.line_apellido.text(),
             self.ui_registro.line_usuario.text(),
             self.ui_registro.line_contrasena.text(),
             self.ui_registro.line_email.text(),
             self.ui_registro.line_telefono.text(),
-            self.ui_registro.combo_rol.currentText().lower(),
+            self.ui_registro.combo_rol.currentText()
         ]
-        if not all(campos):
-            QtWidgets.QMessageBox.warning(self.dialog_registro, "Campos incompletos", "Completa todos los campos.")
-            return
-
-        try:
-            cursor = self.conn.cursor()
-            cursor.execute(
-                "INSERT INTO usuarios (nombre_usuario, apellido_usuario, usuario, contrasena, email_usuario, telefono_usuario, rol) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?)",
-                campos
-            )
-            self.conn.commit()
-            QtWidgets.QMessageBox.information(self.dialog_registro, "Registro exitoso", "Usuario registrado correctamente.")
-            self.volver_login()
-        except Exception as e:
-            QtWidgets.QMessageBox.critical(self.dialog_registro, "Error", f"No se pudo registrar: {e}")
+        exito, mensaje = self.registro_controller.registrar_usuario(campos)
+        if exito:
+            QtWidgets.QMessageBox.information(self.dialog_registro, "Éxito", mensaje)
+            self.dialog_registro.close()
+            self.show()
+        else:
+            QtWidgets.QMessageBox.warning(self.dialog_registro, "Error", mensaje)
 
     def volver_login(self):
         self.dialog_registro.close()
@@ -194,21 +203,23 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
 
     def volver_login_desde_rol(self):
         if self.ventana_rol:
-            self.ventana_rol.hide()
+            self.ventana_rol.close()
             self.ventana_rol = None
         self.show()
 
     def salir(self):
-        QtWidgets.QMessageBox.information(self, "Salir", "Saliendo de la aplicación.")
-        QtCore.QCoreApplication.quit()
-
-    def closeEvent(self, event):
-        self.db.close()
+        self.db.disconnect()
+        QtWidgets.qApp.quit()
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    ventana = MainWindow()
-    ventana.show()
+    main_window = MainWindow()
+    main_window.show()
     sys.exit(app.exec_())
+
+
+
+
+

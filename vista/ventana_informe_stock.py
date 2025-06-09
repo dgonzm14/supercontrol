@@ -1,65 +1,54 @@
 import csv
 from PyQt5 import QtWidgets
-from controlador.informe_stock import Ui_InformeStockWindow  # tu archivo generado
+from vista.informe_stock import Ui_InformeStockWindow
 
 class VentanaInformeStock(QtWidgets.QDialog):
-    def __init__(self, parent=None, conexion=None):
+    def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_InformeStockWindow()
         self.ui.setupUi(self)
-        self.conn = conexion
 
-        
-        self.ui.tabla_stock.setColumnCount(4)
-        self.ui.tabla_stock.setHorizontalHeaderLabels(["Nombre", "Precio", "Descripción", "Stock"])
+    def set_column_headers(self, headers):
+        self.ui.tabla_stock.setColumnCount(len(headers))
+        self.ui.tabla_stock.setHorizontalHeaderLabels(headers)
 
-        
-        self.ui.btn_exportar.clicked.connect(self.exportar_csv)
-        self.ui.btn_cerrar.clicked.connect(self.close)
+    def mostrar_datos(self, datos):
+        self.ui.tabla_stock.setRowCount(len(datos))
+        for fila, fila_datos in enumerate(datos):
+            for col, valor in enumerate(fila_datos):
+                item = QtWidgets.QTableWidgetItem(str(valor if valor is not None else ""))
+                self.ui.tabla_stock.setItem(fila, col, item)
+        self.ui.tabla_stock.resizeColumnsToContents()
 
-        
-        self.cargar_datos()
+    def on_exportar(self, callback):
+        self.ui.btn_exportar.clicked.connect(callback)
 
-    def cargar_datos(self):
-        try:
-            cursor = self.conn.cursor()
-            
-            cursor.execute("""
-                SELECT p.nombre_producto, p.precio, p.descripcion_producto, 
-                       ISNULL(s.cantidad, 0) as stock
-                FROM productos p
-                LEFT JOIN stock s ON p.id_producto = s.id_producto
-            """)
-            datos = cursor.fetchall()
+    def on_cerrar(self, callback):
+        self.ui.btn_cerrar.clicked.connect(callback)
 
-            self.ui.tabla_stock.setRowCount(len(datos))
-            for fila, (nombre, precio, descripcion, stock) in enumerate(datos):
-                self.ui.tabla_stock.setItem(fila, 0, QtWidgets.QTableWidgetItem(str(nombre)))
-                self.ui.tabla_stock.setItem(fila, 1, QtWidgets.QTableWidgetItem(f"{precio:.2f}" if precio is not None else "0.00"))
-                self.ui.tabla_stock.setItem(fila, 2, QtWidgets.QTableWidgetItem(str(descripcion) if descripcion else ""))
-                self.ui.tabla_stock.setItem(fila, 3, QtWidgets.QTableWidgetItem(str(stock)))
-
-            self.ui.tabla_stock.resizeColumnsToContents()
-
-        except Exception as e:
-            QtWidgets.QMessageBox.critical(self, "Error", f"No se pudo cargar el informe:\n{e}")
-
-    def exportar_csv(self):
+    def obtener_ruta_guardado(self):
         path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Guardar informe como CSV", "", "CSV Files (*.csv)")
-        if not path:
-            return
-        try:
-            with open(path, mode='w', newline='', encoding='utf-8') as archivo:
-                writer = csv.writer(archivo)
-                
-                writer.writerow(["Nombre", "Precio", "Descripción", "Stock"])
-                
-                for fila in range(self.ui.tabla_stock.rowCount()):
-                    rowdata = []
-                    for col in range(self.ui.tabla_stock.columnCount()):
-                        item = self.ui.tabla_stock.item(fila, col)
-                        rowdata.append(item.text() if item else "")
-                    writer.writerow(rowdata)
-            QtWidgets.QMessageBox.information(self, "Éxito", "Informe exportado correctamente.")
-        except Exception as e:
-            QtWidgets.QMessageBox.critical(self, "Error", f"No se pudo exportar el informe:\n{e}")
+        return path
+
+    def obtener_datos_tabla(self):
+        datos = []
+        for fila in range(self.ui.tabla_stock.rowCount()):
+            fila_datos = []
+            for col in range(self.ui.tabla_stock.columnCount()):
+                item = self.ui.tabla_stock.item(fila, col)
+                fila_datos.append(item.text() if item else "")
+            datos.append(fila_datos)
+        return datos
+
+    def exportar_a_csv(self, path, datos):
+        with open(path, mode='w', newline='', encoding='utf-8') as archivo:
+            writer = csv.writer(archivo)
+            writer.writerow(["Nombre", "Precio", "Descripción", "Stock"])
+            writer.writerows(datos)
+
+    def mostrar_error(self, mensaje):
+        QtWidgets.QMessageBox.critical(self, "Error", mensaje)
+
+    def mostrar_info(self, titulo, mensaje):
+        QtWidgets.QMessageBox.information(self, titulo, mensaje)
+

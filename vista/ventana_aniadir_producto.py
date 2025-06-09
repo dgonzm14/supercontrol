@@ -1,5 +1,6 @@
 from PyQt5 import QtWidgets
-from controlador.aniadir_producto import Ui_AniadirProductoDialog
+from vista.aniadir_producto import Ui_AniadirProductoDialog
+from controlador.aniadir_producto import AniadirProductoController
 
 class VentanaAniadirProducto(QtWidgets.QDialog):
     def __init__(self, parent=None, conexion=None):
@@ -7,45 +8,24 @@ class VentanaAniadirProducto(QtWidgets.QDialog):
         self.ui = Ui_AniadirProductoDialog()
         self.ui.setupUi(self)
 
-        self.conn = conexion
+        self.controller = AniadirProductoController(conexion)
 
         self.ui.btn_agregar.clicked.connect(self.agregar_producto)
         self.ui.btn_cancelar.clicked.connect(self.close)
 
     def agregar_producto(self):
-        nombre = self.ui.line_nombre.text().strip()
-        descripcion = self.ui.line_descripcion.text().strip()
+        nombre = self.ui.line_nombre.text()
+        descripcion = self.ui.line_descripcion.text()
 
-        if not nombre or not descripcion:
-            QtWidgets.QMessageBox.warning(self, "Campos incompletos", "Por favor completa nombre y descripción.")
-            return
+        exito, mensaje = self.controller.agregar_producto(nombre, descripcion)
 
-        try:
-            cursor = self.conn.cursor()
-
-            
-            cursor.execute(
-                "INSERT INTO productos (nombre_producto, descripcion_producto) VALUES (?, ?)",
-                (nombre, descripcion)
-            )
-            self.conn.commit()
-
-           
-            cursor.execute("SELECT @@IDENTITY")
-            id_producto = cursor.fetchone()[0]
-
-            
-            cursor.execute(
-                "INSERT INTO precios (id_producto, precio) VALUES (?, ?)",
-                (id_producto, 1.00)
-            )
-            self.conn.commit()
-
-            QtWidgets.QMessageBox.information(self, "Éxito", "Producto agregado correctamente con precio predeterminado 1.00.")
+        if exito:
+            QtWidgets.QMessageBox.information(self, "Éxito", mensaje)
             self.close()
+        else:
+            QtWidgets.QMessageBox.warning(self, "Error", mensaje)
 
-        except Exception as e:
-            QtWidgets.QMessageBox.critical(self, "Error", f"No se pudo agregar el producto:\n{e}")
+
 
 
 

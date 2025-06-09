@@ -1,12 +1,16 @@
+# vista/ventana_consultar_stock.py
 from PyQt5 import QtWidgets
-from controlador.consultar_stock import Ui_ConsultarStockWindow
-import pyodbc
+from controlador.consultar_stock_controller import ConsultarStockController
+from vista.consultar_stock import Ui_ConsultarStockWindow  # generado de .ui
 
 class VentanaConsultarStock(QtWidgets.QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, conexion, parent=None):
         super().__init__(parent)
+        self.conn = conexion
         self.ui = Ui_ConsultarStockWindow()
         self.ui.setupUi(self)
+
+        self.controlador = ConsultarStockController(self.conn)
 
         self.ui.btn_volver.clicked.connect(self.volver_a_cliente)
         self.ui.btn_salir.clicked.connect(QtWidgets.qApp.quit)
@@ -15,32 +19,19 @@ class VentanaConsultarStock(QtWidgets.QDialog):
 
     def cargar_datos(self):
         try:
-            conn = pyodbc.connect(
-                'DRIVER={SQL Server};'
-                'SERVER=GOXUEL\\SQLEXPRESS;'
-                'DATABASE=SuperControl;'
-                'Trusted_Connection=yes;'
-            )
-            cursor = conn.cursor()
-            
-            cursor.execute("""
-                SELECT p.nombre_producto, s.cantidad, p.descripcion_producto
-                FROM productos p
-                JOIN stock s ON p.id_producto = s.id_producto
-            """)
-            resultados = cursor.fetchall()
-
+            resultados = self.controlador.obtener_stock()
             self.ui.tabla_stock.setColumnCount(3)
             self.ui.tabla_stock.setHorizontalHeaderLabels(["Producto", "Stock", "Descripción"])
             self.ui.tabla_stock.setRowCount(len(resultados))
 
             for fila, datos in enumerate(resultados):
+                # Si usas VO, sería datos.nombre_producto, etc.
                 for columna, valor in enumerate(datos):
                     item = QtWidgets.QTableWidgetItem(str(valor))
                     self.ui.tabla_stock.setItem(fila, columna, item)
 
             self.ui.tabla_stock.resizeColumnsToContents()
-            conn.close()
+
         except Exception as e:
             QtWidgets.QMessageBox.critical(self, "Error", f"No se pudo cargar el stock:\n{e}")
 
@@ -48,6 +39,7 @@ class VentanaConsultarStock(QtWidgets.QDialog):
         self.close()
         if self.parent():
             self.parent().show()
+
 
 
 
