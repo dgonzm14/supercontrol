@@ -31,7 +31,6 @@ from modelo.dao.valor_stock_dao import ValorStockDAO
 
 from modelo.sqlserver_db import SqlServerDatabase
 
-
 class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
     def __init__(self):
         super().__init__()
@@ -119,7 +118,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
         self.show()
 
     def abrir_modificar_stock_modstock(self):
-        ventana = VentanaModificarStockModStock(self.ventana_rol)
+        from controlador.stock_controller_modstock import StockControllerModStock
+
+        controller = StockControllerModStock(self.conn)
+        ventana = VentanaModificarStockModStock(controller, parent=self.ventana_rol)
         self.ventana_rol.hide()
         ventana.exec_()
         self.ventana_rol.show()
@@ -218,6 +220,7 @@ if __name__ == "__main__":
     main_window = MainWindow()
     main_window.show()
     sys.exit(app.exec_())
+
 
 
 

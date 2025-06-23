@@ -1,16 +1,13 @@
 from PyQt5 import QtWidgets
 from vista.modificar_stock import Ui_ModificarStockWindow
-from controlador.stock_controller_modstock import StockControllerModStock
-import pyodbc
 
 class VentanaModificarStockModStock(QtWidgets.QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, controller, parent=None):
         super().__init__(parent)
         self.ui = Ui_ModificarStockWindow()
         self.ui.setupUi(self)
 
-        self.conexion = self.conectar()
-        self.controller = StockControllerModStock(self.conexion)
+        self.controller = controller
 
         self.ui.btn_modificar.clicked.connect(self.modificar_stock)
         self.ui.btn_volver.clicked.connect(self.volver)
@@ -18,14 +15,6 @@ class VentanaModificarStockModStock(QtWidgets.QDialog):
 
         self.productos = []
         self.cargar_productos()
-
-    def conectar(self):
-        return pyodbc.connect(
-            'DRIVER={SQL Server};'
-            'SERVER=GOXUEL\\SQLEXPRESS;'
-            'DATABASE=SuperControl;'
-            'Trusted_Connection=yes;'
-        )
 
     def cargar_productos(self):
         try:
@@ -58,6 +47,8 @@ class VentanaModificarStockModStock(QtWidgets.QDialog):
         self.close()
         if self.parent():
             self.parent().show()
+
+
 
 
 
