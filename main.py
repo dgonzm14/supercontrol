@@ -23,13 +23,11 @@ from vista.ventana_valor_stock import VentanaValorStock
 from vista.ventana_eliminar_producto import VentanaEliminarProducto
 from vista.ventana_gestionar_usuarios import VentanaGestionarUsuarios
 
-from modelo.dao.eliminar_producto_dao import EliminarProductoDAO
-from modelo.dao.informe_stock_dao import InformeStockDAO
 from modelo.dao.modificar_precio_dao import ModificarPrecioDAO
-from modelo.dao.producto_dao import ProductoDAO
 from modelo.dao.valor_stock_dao import ValorStockDAO
 
-from modelo.producto_logic import ProductoLogic  # <-- Importa la capa lógica producto
+from modelo.producto_logic import ProductoLogic
+from modelo.informe_stock_logic import InformeStockLogic  # ✅ lógica para informe stock
 from modelo.sqlserver_db import SqlServerDatabase
 
 
@@ -112,7 +110,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
         self.show()
 
     def consultar_precios(self):
-        # Usamos la capa lógica para separar responsabilidades
         producto_logic = ProductoLogic(self.conn)
         controlador = ConsultarPreciosController(producto_logic)
         ventana = VentanaConsultarPrecios(controller=controlador, parent=self)
@@ -152,8 +149,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
     def abrir_informe_stock(self):
         self.ventana_rol.hide()
         vista = VentanaInformeStock(parent=self)
-        dao = InformeStockDAO(self.conn)
-        controller = InformeStockController(vista=vista, dao=dao)
+        logic = InformeStockLogic(self.conn)  # ✅ lógica en lugar de DAO
+        controller = InformeStockController(vista=vista, logic=logic)
         vista.exec_()
         self.ventana_rol.show()
 
@@ -223,6 +220,7 @@ if __name__ == "__main__":
     main_window = MainWindow()
     main_window.show()
     sys.exit(app.exec_())
+
 
 
 

@@ -1,7 +1,7 @@
 class InformeStockController:
-    def __init__(self, vista, dao):
+    def __init__(self, vista, logic):
         self.vista = vista
-        self.dao = dao
+        self.logic = logic
         self.conectar_eventos()
         self.vista.set_column_headers(["Nombre", "Precio", "Descripción", "Stock"])
         self.cargar_datos()
@@ -12,7 +12,7 @@ class InformeStockController:
 
     def cargar_datos(self):
         try:
-            datos = self.dao.obtener_datos_stock()
+            datos = self.logic.obtener_datos_stock()  
             self.vista.mostrar_datos(datos)
         except Exception as e:
             self.vista.mostrar_error(f"No se pudo cargar el informe:\n{e}")
@@ -27,3 +27,5 @@ class InformeStockController:
             self.vista.mostrar_info("Éxito", "Informe exportado correctamente.")
         except Exception as e:
             self.vista.mostrar_error(f"No se pudo exportar el informe:\n{e}")
+
+
