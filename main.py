@@ -27,7 +27,8 @@ from modelo.dao.modificar_precio_dao import ModificarPrecioDAO
 from modelo.dao.valor_stock_dao import ValorStockDAO
 
 from modelo.producto_logic import ProductoLogic
-from modelo.informe_stock_logic import InformeStockLogic  # ✅ lógica para informe stock
+from modelo.informe_stock_logic import InformeStockLogic
+from modelo.modificar_precio_logic import ModificarPrecioLogic  # ✅ nueva lógica
 from modelo.sqlserver_db import SqlServerDatabase
 
 
@@ -141,7 +142,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
     def abrir_modificar_precio(self):
         self.ventana_rol.hide()
         dao = ModificarPrecioDAO(self.conn)
-        controller = ModificarPrecioController(dao)
+        logic = ModificarPrecioLogic(dao)  # ✅ nueva capa lógica
+        controller = ModificarPrecioController(logic)
         ventana = VentanaModificarPrecio(parent=self, controller=controller)
         ventana.exec_()
         self.ventana_rol.show()
@@ -149,7 +151,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
     def abrir_informe_stock(self):
         self.ventana_rol.hide()
         vista = VentanaInformeStock(parent=self)
-        logic = InformeStockLogic(self.conn)  # ✅ lógica en lugar de DAO
+        logic = InformeStockLogic(self.conn)
         controller = InformeStockController(vista=vista, logic=logic)
         vista.exec_()
         self.ventana_rol.show()
