@@ -13,5 +13,5 @@ class StockDAO:
         resultados = cursor.fetchall()
         stock_list = []
         for row in resultados:
-            stock_list.append(row)  # opcional: o crear StockVO(row[0], row[1], row[2])
+            stock_list.append(row)  
         return stock_list

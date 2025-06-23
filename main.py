@@ -29,7 +29,9 @@ from modelo.dao.modificar_precio_dao import ModificarPrecioDAO
 from modelo.dao.producto_dao import ProductoDAO
 from modelo.dao.valor_stock_dao import ValorStockDAO
 
+from modelo.producto_logic import ProductoLogic  # <-- Importa la capa lógica producto
 from modelo.sqlserver_db import SqlServerDatabase
+
 
 class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
     def __init__(self):
@@ -110,8 +112,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
         self.show()
 
     def consultar_precios(self):
-        producto_dao = ProductoDAO(self.conn)
-        controlador = ConsultarPreciosController(producto_dao)
+        # Usamos la capa lógica para separar responsabilidades
+        producto_logic = ProductoLogic(self.conn)
+        controlador = ConsultarPreciosController(producto_logic)
         ventana = VentanaConsultarPrecios(controller=controlador, parent=self)
         self.hide()
         ventana.exec_()
@@ -220,6 +223,7 @@ if __name__ == "__main__":
     main_window = MainWindow()
     main_window.show()
     sys.exit(app.exec_())
+
 
 
 

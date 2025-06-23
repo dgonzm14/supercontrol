@@ -1,4 +1,3 @@
-# vista/ventana_consultar_stock.py
 from PyQt5 import QtWidgets
 from controlador.consultar_stock_controller import ConsultarStockController
 from vista.consultar_stock import Ui_ConsultarStockWindow  # generado de .ui
