@@ -21,6 +21,7 @@ from vista.ventana_modificar_precio import VentanaModificarPrecio
 from vista.ventana_informe_stock import VentanaInformeStock
 from vista.ventana_valor_stock import VentanaValorStock
 from vista.ventana_eliminar_producto import VentanaEliminarProducto
+
 from vista.ventana_gestionar_usuarios import VentanaGestionarUsuarios
 
 from modelo.dao.modificar_precio_dao import ModificarPrecioDAO
@@ -28,8 +29,11 @@ from modelo.dao.valor_stock_dao import ValorStockDAO
 
 from modelo.producto_logic import ProductoLogic
 from modelo.informe_stock_logic import InformeStockLogic
-from modelo.modificar_precio_logic import ModificarPrecioLogic  # ✅ nueva lógica
+from modelo.modificar_precio_logic import ModificarPrecioLogic
 from modelo.sqlserver_db import SqlServerDatabase
+
+from modelo.usuario_logic import UsuarioLogic
+from controlador.usuario_controller import UsuarioController
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
@@ -142,7 +146,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
     def abrir_modificar_precio(self):
         self.ventana_rol.hide()
         dao = ModificarPrecioDAO(self.conn)
-        logic = ModificarPrecioLogic(dao)  # ✅ nueva capa lógica
+        logic = ModificarPrecioLogic(dao)
         controller = ModificarPrecioController(logic)
         ventana = VentanaModificarPrecio(parent=self, controller=controller)
         ventana.exec_()
@@ -167,7 +171,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
 
     def abrir_gestionar_usuarios(self):
         self.ventana_rol.hide()
+        logic = UsuarioLogic(self.conn)
+        controller = UsuarioController(self.conn)
         ventana = VentanaGestionarUsuarios(parent=self, conexion=self.conn)
+        ventana.controller = controller
         ventana.exec_()
         self.ventana_rol.show()
 
@@ -222,6 +229,7 @@ if __name__ == "__main__":
     main_window = MainWindow()
     main_window.show()
     sys.exit(app.exec_())
+
 
 
 
