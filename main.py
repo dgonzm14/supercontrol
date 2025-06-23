@@ -25,7 +25,6 @@ from vista.ventana_eliminar_producto import VentanaEliminarProducto
 from vista.ventana_gestionar_usuarios import VentanaGestionarUsuarios
 
 from modelo.dao.modificar_precio_dao import ModificarPrecioDAO
-from modelo.dao.valor_stock_dao import ValorStockDAO
 
 from modelo.producto_logic import ProductoLogic
 from modelo.informe_stock_logic import InformeStockLogic
@@ -34,6 +33,10 @@ from modelo.sqlserver_db import SqlServerDatabase
 
 from modelo.usuario_logic import UsuarioLogic
 from controlador.usuario_controller import UsuarioController
+
+# Aquí importamos la lógica y el controlador para valor stock (lógica incluye DAO)
+from modelo.valor_stock_logic import ValorStockLogic
+from controlador.valor_stock_controller import ValorStockController
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
@@ -161,11 +164,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
         self.ventana_rol.show()
 
     def abrir_valor_stock(self):
-        from controlador.valor_stock_controller import ValorStockController
-        dao = ValorStockDAO(self.conn)
-        controller = ValorStockController(dao)
-        ventana = VentanaValorStock(controller=controller, parent=self)
+        # Ahora abrimos la ventana de valor stock usando la lógica que internamente usa DAO
         self.ventana_rol.hide()
+        logic = ValorStockLogic(self.conn)
+        controller = ValorStockController(logic)
+        ventana = VentanaValorStock(controller=controller, parent=self)
         ventana.exec_()
         self.ventana_rol.show()
 
@@ -229,6 +232,7 @@ if __name__ == "__main__":
     main_window = MainWindow()
     main_window.show()
     sys.exit(app.exec_())
+
 
 
 
