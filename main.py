@@ -224,7 +224,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
         self.show()
 
     def salir(self):
-        self.db.disconnect()
+        self.db.connect()
         QtWidgets.qApp.quit()
 
 
