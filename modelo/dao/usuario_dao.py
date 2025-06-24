@@ -1,4 +1,3 @@
-# modelo/dao/usuario_dao.py
 class UsuarioDAO:
     def __init__(self, conexion):
         self.conn = conexion

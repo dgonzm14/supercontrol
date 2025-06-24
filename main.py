@@ -5,38 +5,35 @@ from vista.cliente import Ui_ClienteWindow
 from vista.empleado import Ui_EmpleadoWindow
 from vista.jefe import Ui_JefeWindow
 
-from controlador.login_controller import LoginController, RegistroController
+from controlador.login_controller import LoginController
+from controlador.registro_controller import RegistroController
 from controlador.eliminar_producto_controller import EliminarProductoController
 from controlador.informe_stock_controller import InformeStockController
 from controlador.modificar_precio_controller import ModificarPrecioController
-
 from controlador.consultar_precios_controller import ConsultarPreciosController
-from vista.ventana_consultar_precios import VentanaConsultarPrecios
+from controlador.usuario_controller import UsuarioController
+from controlador.valor_stock_controller import ValorStockController
 
+from modelo.sqlserver_db import SqlServerDatabase
+from modelo.dao.login_dao import LoginDAO
+from modelo.dao.registro_dao import RegistroDAO
+from modelo.login_logic import LoginLogic
+from modelo.registro_logic import RegistroLogic
+from modelo.producto_logic import ProductoLogic
+from modelo.informe_stock_logic import InformeStockLogic
+from modelo.modificar_precio_logic import ModificarPrecioLogic
+from modelo.usuario_logic import UsuarioLogic
+from modelo.valor_stock_logic import ValorStockLogic
+
+from vista.ventana_consultar_precios import VentanaConsultarPrecios
 from vista.ventana_consultar_stock import VentanaConsultarStock
 from vista.ventana_mod_stock_modstock import VentanaModificarStockModStock 
-
 from vista.ventana_aniadir_producto import VentanaAniadirProducto
 from vista.ventana_modificar_precio import VentanaModificarPrecio
 from vista.ventana_informe_stock import VentanaInformeStock
 from vista.ventana_valor_stock import VentanaValorStock
 from vista.ventana_eliminar_producto import VentanaEliminarProducto
-
 from vista.ventana_gestionar_usuarios import VentanaGestionarUsuarios
-
-from modelo.dao.modificar_precio_dao import ModificarPrecioDAO
-
-from modelo.producto_logic import ProductoLogic
-from modelo.informe_stock_logic import InformeStockLogic
-from modelo.modificar_precio_logic import ModificarPrecioLogic
-from modelo.sqlserver_db import SqlServerDatabase
-
-from modelo.usuario_logic import UsuarioLogic
-from controlador.usuario_controller import UsuarioController
-
-# Aquí importamos la lógica y el controlador para valor stock (lógica incluye DAO)
-from modelo.valor_stock_logic import ValorStockLogic
-from controlador.valor_stock_controller import ValorStockController
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
@@ -44,6 +41,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
         super().__init__()
         self.setupUi(self)
 
+        # Conexión a la base de datos
         connection_string = (
             'DRIVER={SQL Server};'
             'SERVER=GOXUEL\\SQLEXPRESS;'
@@ -54,9 +52,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
         self.db.connect()
         self.conn = self.db.get_connection()
 
-        self.login_controller = LoginController(self.conn)
-        self.registro_controller = None
+        # Inicializamos lógica y controladores de login y registro
+        login_dao = LoginDAO(self.conn)
+        login_logic = LoginLogic(login_dao)
+        self.login_controller = LoginController(login_logic)
 
+        registro_dao = RegistroDAO(self.conn)
+        registro_logic = RegistroLogic(registro_dao)
+        self.registro_controller = RegistroController(registro_logic)
+
+        # Conexión de botones
         self.btn_login.clicked.connect(self.login)
         self.btn_registrar.clicked.connect(self.abrir_registro)
         self.btn_salir.clicked.connect(self.salir)
@@ -93,7 +98,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
             self.ventana_rol = QtWidgets.QMainWindow(self)
             self.ui_rol = Ui_EmpleadoWindow()
             self.ui_rol.setupUi(self.ventana_rol)
-
             self.ui_rol.btn_modificar_stock.clicked.connect(self.abrir_modificar_stock_modstock)
             self.ui_rol.btn_aniadir_producto.clicked.connect(self.abrir_aniadir_producto)
             self.ui_rol.btn_eliminar_producto.clicked.connect(self.abrir_eliminar_producto)
@@ -127,7 +131,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
 
     def abrir_modificar_stock_modstock(self):
         from controlador.stock_controller_modstock import StockControllerModStock
-
         controller = StockControllerModStock(self.conn)
         ventana = VentanaModificarStockModStock(controller, parent=self.ventana_rol)
         self.ventana_rol.hide()
@@ -148,7 +151,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
 
     def abrir_modificar_precio(self):
         self.ventana_rol.hide()
-        dao = ModificarPrecioDAO(self.conn)
+        dao = ModificarPrecioLogic(self.conn)
         logic = ModificarPrecioLogic(dao)
         controller = ModificarPrecioController(logic)
         ventana = VentanaModificarPrecio(parent=self, controller=controller)
@@ -164,7 +167,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
         self.ventana_rol.show()
 
     def abrir_valor_stock(self):
-        # Ahora abrimos la ventana de valor stock usando la lógica que internamente usa DAO
         self.ventana_rol.hide()
         logic = ValorStockLogic(self.conn)
         controller = ValorStockController(logic)
@@ -186,7 +188,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
         self.dialog_registro = QtWidgets.QDialog(self)
         self.ui_registro = Ui_Dialog()
         self.ui_registro.setupUi(self.dialog_registro)
-        self.registro_controller = RegistroController(self.conn)
 
         self.ui_registro.btn_volver.clicked.connect(self.volver_login)
         self.ui_registro.btn_salir.clicked.connect(self.salir)
@@ -196,7 +197,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
     def registrar_usuario(self):
         campos = [
             self.ui_registro.line_nombre.text(),
-            self.ui_registro.line_apellido.text(),
+            self.ui_registro.line_apellidos.text(),
             self.ui_registro.line_usuario.text(),
             self.ui_registro.line_contrasena.text(),
             self.ui_registro.line_email.text(),

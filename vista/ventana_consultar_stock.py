@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets
 from controlador.consultar_stock_controller import ConsultarStockController
-from vista.consultar_stock import Ui_ConsultarStockWindow  # generado de .ui
+from vista.consultar_stock import Ui_ConsultarStockWindow  
 
 class VentanaConsultarStock(QtWidgets.QDialog):
     def __init__(self, conexion, parent=None):
@@ -24,7 +24,6 @@ class VentanaConsultarStock(QtWidgets.QDialog):
             self.ui.tabla_stock.setRowCount(len(resultados))
 
             for fila, datos in enumerate(resultados):
-                # Si usas VO, sería datos.nombre_producto, etc.
                 for columna, valor in enumerate(datos):
                     item = QtWidgets.QTableWidgetItem(str(valor))
                     self.ui.tabla_stock.setItem(fila, columna, item)

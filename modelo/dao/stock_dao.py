@@ -1,4 +1,3 @@
-# modelo/stock_dao.py
 class StockDAO:
     def __init__(self, conexion):
         self.conn = conexion

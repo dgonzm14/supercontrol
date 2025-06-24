@@ -3,7 +3,7 @@ from modelo.dao.eliminar_producto_dao import EliminarProductoDAO
 class EliminarProductoLogic:
     def __init__(self, conexion):
         self.dao = EliminarProductoDAO(conexion)
-        self.productos = {}  # nombre: id
+        self.productos = {} 
 
     def cargar_productos(self):
         productos = self.dao.obtener_productos()
