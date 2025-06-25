@@ -12,7 +12,7 @@ class InformeStockController:
 
     def cargar_datos(self):
         try:
-            datos = self.logic.obtener_datos_stock()  
+            datos = self.logic.obtener_datos_stock()
             self.vista.mostrar_datos(datos)
         except Exception as e:
             self.vista.mostrar_error(f"No se pudo cargar el informe:\n{e}")
@@ -27,5 +27,6 @@ class InformeStockController:
             self.vista.mostrar_info("Éxito", "Informe exportado correctamente.")
         except Exception as e:
             self.vista.mostrar_error(f"No se pudo exportar el informe:\n{e}")
+
 
 

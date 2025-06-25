@@ -11,3 +11,5 @@ class InformeStockDAO:
             LEFT JOIN stock s ON p.id_producto = s.id_producto
         """)
         return cursor.fetchall()
+
+

@@ -22,7 +22,7 @@ class EliminarProductoLogic:
             if id_producto is None:
                 return False, "Producto no encontrado"
 
-            # Eliminamos sin chequear dependencias, en cascada
+            
             self.dao.eliminar_producto_y_dependencias(id_producto)
             return True, "Producto eliminado correctamente"
         except Exception as e:

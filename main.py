@@ -28,6 +28,7 @@ from modelo.modificar_precio_logic import ModificarPrecioLogic
 from modelo.usuario_logic import UsuarioLogic
 from modelo.valor_stock_logic import ValorStockLogic
 from modelo.stock_logic import StockLogic
+from modelo.dao.informe_stock_dao import InformeStockDAO  # Importamos DAO informe stock
 
 from vista.ventana_consultar_precios import VentanaConsultarPrecios
 from vista.ventana_consultar_stock import VentanaConsultarStock
@@ -163,7 +164,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
     def abrir_informe_stock(self):
         self.ventana_rol.hide()
         vista = VentanaInformeStock(parent=self)
-        logic = InformeStockLogic(self.conn)
+        dao = InformeStockDAO(self.conn)  # Crear DAO aquí
+        logic = InformeStockLogic(dao)    # Pasar DAO a la lógica
         controller = InformeStockController(vista=vista, logic=logic)
         vista.exec_()
         self.ventana_rol.show()
@@ -234,6 +236,7 @@ if __name__ == "__main__":
     main_window = MainWindow()
     main_window.show()
     sys.exit(app.exec_())
+
 
 
 
