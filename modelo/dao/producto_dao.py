@@ -1,5 +1,5 @@
 from modelo.vo.producto_vo import ProductoVO
-from modelo.sqlserver_db import SqlServerDatabase
+from modelo.conexion.sqlserver_db import SqlServerDatabase
 
 class ProductoDAO:
     def __init__(self, conexion):  # Recibe la conexión como parámetro

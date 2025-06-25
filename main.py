@@ -15,7 +15,7 @@ from controlador.usuario_controller import UsuarioController
 from controlador.valor_stock_controller import ValorStockController
 from controlador.consultar_stock_controller import ConsultarStockController
 
-from modelo.sqlserver_db import SqlServerDatabase
+from modelo.conexion.sqlserver_db import SqlServerDatabase
 from modelo.dao.login_dao import LoginDAO
 from modelo.dao.registro_dao import RegistroDAO
 from modelo.dao.modificar_precio_dao import ModificarPrecioDAO
