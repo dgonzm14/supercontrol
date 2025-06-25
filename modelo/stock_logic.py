@@ -6,3 +6,5 @@ class StockLogic:
 
     def obtener_stock(self):
         return self.dao.obtener_todo_stock()
+
+

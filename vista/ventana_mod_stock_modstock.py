@@ -45,8 +45,9 @@ class VentanaModificarStockModStock(QtWidgets.QDialog):
 
     def volver(self):
         self.close()
-        if self.parent():
+        if self.parent() is not None:
             self.parent().show()
+
 
 
 

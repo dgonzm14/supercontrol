@@ -1,8 +1,8 @@
 from modelo.dao.usuario_dao import UsuarioDAO
 
 class UsuarioLogic:
-    def __init__(self, conexion):
-        self.dao = UsuarioDAO(conexion)
+    def __init__(self, dao: UsuarioDAO):
+        self.dao = dao
 
     def obtener_usuarios(self):
         return self.dao.obtener_usuarios()
@@ -23,3 +23,4 @@ class UsuarioLogic:
             return True, f"Usuario '{usuario}' eliminado."
         except Exception as e:
             return False, f"No se pudo eliminar el usuario:\n{e}"
+

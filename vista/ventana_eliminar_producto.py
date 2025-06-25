@@ -1,6 +1,8 @@
 from PyQt5 import QtWidgets
-from vista.eliminar_producto import Ui_EliminarProductoWindow
+from .eliminar_producto import Ui_EliminarProductoWindow
 from controlador.eliminar_producto_controller import EliminarProductoController
+from modelo.eliminar_producto_logic import EliminarProductoLogic
+from modelo.dao.eliminar_producto_dao import EliminarProductoDAO  
 
 class VentanaEliminarProducto(QtWidgets.QDialog):
     def __init__(self, parent=None, conexion=None):
@@ -8,12 +10,14 @@ class VentanaEliminarProducto(QtWidgets.QDialog):
         self.ui = Ui_EliminarProductoWindow()
         self.ui.setupUi(self)
 
-        self.controller = EliminarProductoController(conexion)
+        self.dao = EliminarProductoDAO(conexion)
+        self.logic = EliminarProductoLogic(self.dao)
+        self.controller = EliminarProductoController(self.logic)
+
+        self.cargar_productos()
 
         self.ui.btn_eliminar.clicked.connect(self.eliminar_producto)
         self.ui.btn_volver.clicked.connect(self.close)
-
-        self.cargar_productos()
 
     def cargar_productos(self):
         exito, resultado = self.controller.cargar_productos()
@@ -31,6 +35,12 @@ class VentanaEliminarProducto(QtWidgets.QDialog):
             self.cargar_productos()
         else:
             QtWidgets.QMessageBox.warning(self, "Error", mensaje)
+
+
+
+
+
+
 
 
 

@@ -1,28 +1,34 @@
-from modelo.dao.eliminar_producto_dao import EliminarProductoDAO
-
 class EliminarProductoLogic:
-    def __init__(self, conexion):
-        self.dao = EliminarProductoDAO(conexion)
-        self.productos = {} 
+    def __init__(self, dao):
+        self.dao = dao
 
-    def cargar_productos(self):
-        productos = self.dao.obtener_productos()
-        self.productos = {nombre: id_producto for id_producto, nombre in productos}
-        return list(self.productos.keys())
+    def obtener_productos(self):
+        try:
+            productos = self.dao.obtener_productos()
+            nombres = [prod[1] for prod in productos]  
+            return True, nombres
+        except Exception as e:
+            return False, str(e)
 
-    def eliminar_producto(self, nombre_seleccionado):
-        if not nombre_seleccionado:
-            return False, "Debes seleccionar un producto."
+    def eliminar_producto(self, nombre_producto):
+        try:
+            productos = self.dao.obtener_productos()
+            id_producto = None
+            for prod in productos:
+                if prod[1] == nombre_producto:
+                    id_producto = prod[0]
+                    break
 
-        id_producto = self.productos.get(nombre_seleccionado)
-        if not id_producto:
-            return False, "Producto no válido."
+            if id_producto is None:
+                return False, "Producto no encontrado"
 
-        count_detalle, count_precios, count_stock = self.dao.contar_dependencias(id_producto)
+            # Eliminamos sin chequear dependencias, en cascada
+            self.dao.eliminar_producto_y_dependencias(id_producto)
+            return True, "Producto eliminado correctamente"
+        except Exception as e:
+            return False, str(e)
 
-        print(f"Filas en detalle_ventas a borrar: {count_detalle}")
-        print(f"Filas en precios a borrar: {count_precios}")
-        print(f"Filas en stock a borrar: {count_stock}")
 
-        self.dao.eliminar_producto_y_dependencias(id_producto)
-        return True, f"Producto '{nombre_seleccionado}' eliminado correctamente."
+
+
+

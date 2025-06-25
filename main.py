@@ -13,11 +13,13 @@ from controlador.modificar_precio_controller import ModificarPrecioController
 from controlador.consultar_precios_controller import ConsultarPreciosController
 from controlador.usuario_controller import UsuarioController
 from controlador.valor_stock_controller import ValorStockController
+from controlador.consultar_stock_controller import ConsultarStockController
 
 from modelo.sqlserver_db import SqlServerDatabase
 from modelo.dao.login_dao import LoginDAO
 from modelo.dao.registro_dao import RegistroDAO
 from modelo.dao.modificar_precio_dao import ModificarPrecioDAO
+from modelo.dao.stock_dao import StockDAO
 from modelo.login_logic import LoginLogic
 from modelo.registro_logic import RegistroLogic
 from modelo.producto_logic import ProductoLogic
@@ -25,6 +27,7 @@ from modelo.informe_stock_logic import InformeStockLogic
 from modelo.modificar_precio_logic import ModificarPrecioLogic
 from modelo.usuario_logic import UsuarioLogic
 from modelo.valor_stock_logic import ValorStockLogic
+from modelo.stock_logic import StockLogic
 
 from vista.ventana_consultar_precios import VentanaConsultarPrecios
 from vista.ventana_consultar_stock import VentanaConsultarStock
@@ -42,8 +45,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
         super().__init__()
         self.setupUi(self)
 
+        # Inicializar conexión a base de datos
         self.conn = SqlServerDatabase().get_connection()
 
+        # Controladores con lógica y DAO
         login_dao = LoginDAO(self.conn)
         login_logic = LoginLogic(login_dao)
         self.login_controller = LoginController(login_logic)
@@ -52,6 +57,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
         registro_logic = RegistroLogic(registro_dao)
         self.registro_controller = RegistroController(registro_logic)
 
+        # Botones del login
         self.btn_login.clicked.connect(self.login)
         self.btn_registrar.clicked.connect(self.abrir_registro)
         self.btn_salir.clicked.connect(self.salir)
@@ -101,12 +107,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
             self.ui_rol.btn_calcular_valor_stock.clicked.connect(self.abrir_valor_stock)
             self.ui_rol.btn_gestionar_usuarios.clicked.connect(self.abrir_gestionar_usuarios)
 
+        # Botones comunes a todas las ventanas de rol
         self.ui_rol.btn_volver.clicked.connect(self.volver_login_desde_rol)
         self.ui_rol.btn_salir.clicked.connect(self.salir)
         self.ventana_rol.show()
 
     def consultar_stock(self):
-        ventana = VentanaConsultarStock(self.conn, self)
+        stock_logic = StockLogic(self.conn)
+        controlador = ConsultarStockController(stock_logic)
+        ventana = VentanaConsultarStock(controller=controlador, parent=self)
         self.hide()
         ventana.exec_()
         self.show()
@@ -120,8 +129,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
         self.show()
 
     def abrir_modificar_stock_modstock(self):
+        from modelo.stock_logic_modstock import StockLogicModStock
         from controlador.stock_controller_modstock import StockControllerModStock
-        controller = StockControllerModStock(self.conn)
+
+        logic = StockLogicModStock(self.conn)
+        controller = StockControllerModStock(logic)
         ventana = VentanaModificarStockModStock(controller, parent=self.ventana_rol)
         self.ventana_rol.hide()
         ventana.exec_()
@@ -166,10 +178,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
 
     def abrir_gestionar_usuarios(self):
         self.ventana_rol.hide()
-        logic = UsuarioLogic(self.conn)
-        controller = UsuarioController(self.conn)
-        ventana = VentanaGestionarUsuarios(parent=self, conexion=self.conn)
-        ventana.controller = controller
+        from modelo.dao.usuario_dao import UsuarioDAO
+        logic = UsuarioLogic(UsuarioDAO(self.conn))
+        controller = UsuarioController(logic)
+        ventana = VentanaGestionarUsuarios(parent=self, controller=controller)
         ventana.exec_()
         self.ventana_rol.show()
 
@@ -222,6 +234,10 @@ if __name__ == "__main__":
     main_window = MainWindow()
     main_window.show()
     sys.exit(app.exec_())
+
+
+
+
 
 
 

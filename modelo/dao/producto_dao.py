@@ -1,7 +1,8 @@
 from modelo.vo.producto_vo import ProductoVO
+from modelo.sqlserver_db import SqlServerDatabase
 
 class ProductoDAO:
-    def __init__(self, conexion):
+    def __init__(self, conexion):  # Recibe la conexión como parámetro
         self.conn = conexion
 
     def agregar_producto(self, producto_vo):
@@ -38,6 +39,9 @@ class ProductoDAO:
             )
             productos.append(producto)
         return productos
+
+
+
 
 
 

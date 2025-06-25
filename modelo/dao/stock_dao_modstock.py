@@ -19,3 +19,4 @@ class StockDAOModStock:
         else:
             cursor.execute("INSERT INTO stock (id_producto, cantidad) VALUES (?, ?)", (id_producto, cantidad))
         self.conn.commit()
+

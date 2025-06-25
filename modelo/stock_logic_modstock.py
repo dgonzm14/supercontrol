@@ -9,3 +9,4 @@ class StockLogicModStock:
 
     def modificar_stock(self, id_producto, cantidad):
         self.dao.actualizar_stock(id_producto, cantidad)
+

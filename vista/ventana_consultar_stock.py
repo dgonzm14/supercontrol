@@ -1,15 +1,13 @@
 from PyQt5 import QtWidgets
-from controlador.consultar_stock_controller import ConsultarStockController
 from vista.consultar_stock import Ui_ConsultarStockWindow  
 
 class VentanaConsultarStock(QtWidgets.QDialog):
-    def __init__(self, conexion, parent=None):
+    def __init__(self, controller, parent=None):
         super().__init__(parent)
-        self.conn = conexion
         self.ui = Ui_ConsultarStockWindow()
         self.ui.setupUi(self)
 
-        self.controlador = ConsultarStockController(self.conn)
+        self.controlador = controller
 
         self.ui.btn_volver.clicked.connect(self.volver_a_cliente)
         self.ui.btn_salir.clicked.connect(QtWidgets.qApp.quit)
@@ -37,6 +35,8 @@ class VentanaConsultarStock(QtWidgets.QDialog):
         self.close()
         if self.parent():
             self.parent().show()
+
+
 
 
 

@@ -1,14 +1,17 @@
 from PyQt5 import QtWidgets
 from vista.gestionar_usuarios import Ui_GestionarUsuariosWindow
-from controlador.usuario_controller import UsuarioController
+
 
 class VentanaGestionarUsuarios(QtWidgets.QDialog):
-    def __init__(self, parent=None, conexion=None):
+    def __init__(self, parent=None, controller=None):
         super().__init__(parent)
         self.ui = Ui_GestionarUsuariosWindow()
         self.ui.setupUi(self)
 
-        self.controller = UsuarioController(conexion)
+        if controller:
+            self.controller = controller
+        else:
+            raise ValueError("Se necesita pasar un controlador UsuarioController")
 
         self.ui.btn_aniadir.clicked.connect(self.obtener_datos_formulario)
         self.ui.btn_eliminar.clicked.connect(self.eliminar_usuario)
@@ -70,5 +73,6 @@ class VentanaGestionarUsuarios(QtWidgets.QDialog):
         self.ui.line_email.clear()
         self.ui.line_telefono.clear()
         self.ui.combo_rol.setCurrentIndex(0)
+
 
 
