@@ -17,7 +17,7 @@ from controlador.valor_stock_controller import ValorStockController
 from modelo.sqlserver_db import SqlServerDatabase
 from modelo.dao.login_dao import LoginDAO
 from modelo.dao.registro_dao import RegistroDAO
-from modelo.dao.modificar_precio_dao import ModificarPrecioDAO  # Importación necesaria
+from modelo.dao.modificar_precio_dao import ModificarPrecioDAO
 from modelo.login_logic import LoginLogic
 from modelo.registro_logic import RegistroLogic
 from modelo.producto_logic import ProductoLogic
@@ -42,18 +42,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
         super().__init__()
         self.setupUi(self)
 
-        
-        connection_string = (
-            'DRIVER={SQL Server};'
-            'SERVER=GOXUEL\\SQLEXPRESS;'
-            'DATABASE=SuperControl;'
-            'Trusted_Connection=yes;'
-        )
-        self.db = SqlServerDatabase(connection_string)
-        self.db.connect()
-        self.conn = self.db.get_connection()
+        self.conn = SqlServerDatabase().get_connection()
 
-        
         login_dao = LoginDAO(self.conn)
         login_logic = LoginLogic(login_dao)
         self.login_controller = LoginController(login_logic)
@@ -62,7 +52,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
         registro_logic = RegistroLogic(registro_dao)
         self.registro_controller = RegistroController(registro_logic)
 
-        
         self.btn_login.clicked.connect(self.login)
         self.btn_registrar.clicked.connect(self.abrir_registro)
         self.btn_salir.clicked.connect(self.salir)
@@ -152,8 +141,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
 
     def abrir_modificar_precio(self):
         self.ventana_rol.hide()
-        dao = ModificarPrecioDAO(self.conn)  
-        logic = ModificarPrecioLogic(dao)    
+        dao = ModificarPrecioDAO(self.conn)
+        logic = ModificarPrecioLogic(dao)
         controller = ModificarPrecioController(logic)
         ventana = VentanaModificarPrecio(parent=self, controller=controller)
         ventana.exec_()
@@ -224,7 +213,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_label_usuario):
         self.show()
 
     def salir(self):
-        self.db.connect()
         QtWidgets.qApp.quit()
 
 
@@ -234,6 +222,7 @@ if __name__ == "__main__":
     main_window = MainWindow()
     main_window.show()
     sys.exit(app.exec_())
+
 
 
 

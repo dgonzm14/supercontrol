@@ -1,4 +1,3 @@
-
 import pyodbc
 from abc import ABC, ABCMeta
 
@@ -17,9 +16,15 @@ class DatabaseInterface(ABC):
 
 
 class SqlServerDatabase(DatabaseInterface, metaclass=SingletonMeta):
-    def __init__(self, connection_string):
-        self.connection_string = connection_string
+    def __init__(self):
+        self.connection_string = (
+            'DRIVER={SQL Server};'
+            'SERVER=GOXUEL\\SQLEXPRESS;'
+            'DATABASE=SuperControl;'
+            'Trusted_Connection=yes;'
+        )
         self.conn = None
+        self.connect()
 
     def connect(self):
         if self.conn is None:
@@ -47,4 +52,5 @@ class SqlServerDatabase(DatabaseInterface, metaclass=SingletonMeta):
     def commit(self):
         if self.conn:
             self.conn.commit()
+
 
